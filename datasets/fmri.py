@@ -41,7 +41,7 @@ class FMRIDataset(torch.utils.data.Dataset):
         img = torch.from_numpy(img)
 
         target = None
-        if self.target_df:
+        if self.target_df is not None:
             target = self.target_df[data['subject']]
 
         # Apply cropping
