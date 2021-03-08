@@ -23,7 +23,7 @@ class BasicTrainer(BaseTrainer):
         # Construct the model
         self.model = get_model(devices=self.devices, **config['model'])#.to(self.device)
         if self.distributed:
-            device_ids = [self.devices] if self.devices is not None else None
+            device_ids = [self.device] if self.device is not None else None
             self.model = DistributedDataParallel(self.model, device_ids=device_ids)
 
         # Construct the loss function
