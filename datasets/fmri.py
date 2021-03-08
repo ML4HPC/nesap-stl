@@ -100,9 +100,9 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
         valid_targets = targets_df.loc[targets_df.index.isin(valid_subjects)]
         test_targets = targets_df.loc[targets_df.index.isin(test_subjects)]
 
-    train_data = FMRIDataset(data_dir, train_files, target_df=train_targets, **kwargs)
-    valid_data = FMRIDataset(data_dir, valid_files, target_df=valid_targets, **kwargs)
-    test_data = FMRIDataset(data_dir, test_files, target_df=test_targets, **kwargs)
+    train_data = FMRIDataset(data_dir, train_files, target_df=train_targets)
+    valid_data = FMRIDataset(data_dir, valid_files, target_df=valid_targets)
+    test_data = FMRIDataset(data_dir, test_files, target_df=test_targets)
 
     # Datasets and loader config
     return train_data, valid_data, test_data, {}
