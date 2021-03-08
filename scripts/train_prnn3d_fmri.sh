@@ -12,4 +12,4 @@ export KMP_AFFINITY="granularity=fine,compact ,1,0"
 export KMP_BLOCKTIME=1
 
 # Run the training
-srun -l -u python train.py --config configs/prnn3d_fmri.yaml -d mpi --gpus 0 1 2 3
+srun -l -u python train.py --config configs/prnn3d_fmri.yaml -d mpi --gpus 0 1 2 3 $@
