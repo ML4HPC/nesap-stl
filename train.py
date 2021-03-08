@@ -6,6 +6,7 @@ Main training script for NERSC PyTorch examples
 import os
 import argparse
 import logging
+import socket
 
 # Externals
 import yaml
@@ -25,12 +26,12 @@ def parse_args():
             help='YAML configuration file')
     add_arg('-d', '--distributed-backend', choices=['mpi', 'nccl', 'nccl-lsf', 'gloo'],
             help='Specify the distributed backend to use')
-    add_arg('--gpu', type=int,
-            help='Choose a specific GPU by ID')
+    add_arg('--gpus', type=int, nargs='+',
+            help='Choose specific GPUs by device ID')
     add_arg('--ranks-per-node', type=int, default=8,
             help='Specifying number of ranks per node')
-    add_arg('--rank-gpu', action='store_true',
-            help='Choose GPU according to local rank')
+    add_arg('--gpus-per-rank', type=int,
+            help='Number of gpus per worker rank')
     add_arg('--resume', action='store_true',
             help='Resume training from last checkpoint')
     add_arg('-v', '--verbose', action='store_true',
@@ -62,7 +63,8 @@ def main():
     log_file = (os.path.join(output_dir, 'out_%i.log' % rank)
                 if output_dir is not None else None)
     config_logging(verbose=args.verbose, log_file=log_file, append=args.resume)
-    logging.info('Initialized rank %i out of %i', rank, n_ranks)
+    logging.info('Initialized rank %i out of %i on host %s',
+                 rank, n_ranks, socket.gethostname())
     try_barrier()
     if rank == 0:
         logging.info('Configuration: %s' % config)
@@ -72,12 +74,25 @@ def main():
     train_data_loader, valid_data_loader, test_data_loader = get_data_loaders(
         distributed=distributed, **config['data'])
 
+    # Choose GPUs
+    if args.gpus is not None:
+        gpus = args.gpus
+    elif args.gpus_per_rank is not None:
+        local_size = min(args.ranks_per_node, n_ranks)
+        local_rank = rank % local_size
+        gpus = [i * local_size + local_rank for i in range(args.gpus_per_rank)]
+
+        # Causes nccl collective errors in model broadcast
+        #gpus = [local_rank*args.gpus_per_rank + i
+        #        for i in range(args.gpus_per_rank)]
+    else:
+        gpus = []
+    if len(gpus) > 0:
+        logging.info('Using GPUs %s', gpus)
+
     # Load the trainer
-    gpu = (rank % args.ranks_per_node) if args.rank_gpu else args.gpu
-    if gpu is not None:
-        logging.info('Using GPU %i', gpu)
     trainer = get_trainer(name=config['trainer'], distributed=distributed,
-                          rank=rank, output_dir=output_dir, gpu=gpu)
+                          devices=gpus, rank=rank, output_dir=output_dir)
 
     # Build the model and optimizer
     trainer.build(config)

@@ -1,30 +1,35 @@
 """
-This module defines a generic trainer for simple models and datasets.
+This module defines a trainer for auto-regressive sequential models.
 """
 
 # Externals
 import torch
 from torch.nn.parallel import DistributedDataParallel
 
-# Locals
-from .base import BaseTrainer
 from models import get_model
+
+# Locals
+from .basic import BasicTrainer
 import utils.metrics
 
-class BasicTrainer(BaseTrainer):
-    """Trainer code for basic single-model problems"""
+class ModelParallelAutoRegressiveTrainer(BasicTrainer):
+    """Trainer code for basic classification problems."""
 
-    def __init__(self, **kwargs):
-        super(BasicTrainer, self).__init__(**kwargs)
+    def __init__(self, devices, **kwargs):
+        super(ModelParallelAutoRegressiveTrainer, self).__init__(**kwargs)
 
+        devices = ['cuda:{}'.format(device) for device in devices]
+        self.devices = devices
+       
     def build(self, config):
         """Instantiate our model, optimizer, loss function"""
 
-        # Construct the model
-        self.model = get_model(**config['model'])#.to(self.device)
-        if self.distributed:
-            device_ids = [self.devices] if self.devices is not None else None
-            self.model = DistributedDataParallel(self.model, device_ids=device_ids)
+        # Construct the model - updated for multi-gpu model-parallelism
+        self.model = get_model(devices=self.devices, **config['model'])
+
+        # Trying to re-enable data-parallelism later, following:
+        # https://pytorch.org/tutorials/intermediate/ddp_tutorial.html#combine-ddp-with-model-parallelism
+        self.model = DistributedDataParallel(self.model)
 
         # Construct the loss function
         loss_config = config['loss']
@@ -45,23 +50,6 @@ class BasicTrainer(BaseTrainer):
             self.logger.info(self.model)
             self.logger.info('Number of parameters: %i',
                              sum(p.numel() for p in self.model.parameters()))
-    
-    def state_dict(self):
-        """Trainer state dict for checkpointing"""
-        return dict(
-            model=(self.model.module.state_dict()
-                   if self.distributed
-                   else self.model.state_dict()),
-            optimizer=self.optimizer.state_dict(),
-        )
-
-    def load_state_dict(self, state_dict):
-        """Load state dict from checkpoint"""
-        if self.distributed:
-            self.model.module.load_state_dict(state_dict['model'])
-        else:
-            self.model.load_state_dict(state_dict['model'])
-        self.optimizer.load_state_dict(state_dict['optimizer'])
 
     def train_epoch(self, data_loader):
         """Train for one epoch"""
@@ -73,10 +61,10 @@ class BasicTrainer(BaseTrainer):
         utils.metrics.reset_metrics(self.metrics)
 
         # Loop over training batches
-        for i, (batch_input, batch_target) in enumerate(data_loader):
-            batch_input = batch_input.to(self.device)
-            batch_target = batch_target.to(self.device)
+        for i, batch in enumerate(data_loader):
+            batch = batch.to(self.devices[0])
             self.model.zero_grad()
+            batch_input, batch_target = batch[:,:-1], batch[:,1:]
             batch_output = self.model(batch_input)
             batch_loss = self.loss_func(batch_output, batch_target)
             batch_loss.backward()
@@ -84,6 +72,9 @@ class BasicTrainer(BaseTrainer):
             sum_loss += batch_loss.item()
             utils.metrics.update_metrics(self.metrics, batch_output, batch_target)
             self.logger.debug('batch %i loss %.3f', i, batch_loss.item())
+            self.logger.debug('cuda mem %g max %g',
+                              torch.cuda.memory_allocated()/1024**3,
+                              torch.cuda.max_memory_allocated()/1024**3)
 
         train_loss = sum_loss / (i + 1)
         metrics_summary = utils.metrics.get_results(self.metrics)
@@ -103,9 +94,9 @@ class BasicTrainer(BaseTrainer):
         utils.metrics.reset_metrics(self.metrics)
 
         # Loop over batches
-        for i, (batch_input, batch_target) in enumerate(data_loader):
-            batch_input = batch_input.to(self.device)
-            batch_target = batch_target.to(self.device)
+        for i, batch in enumerate(data_loader):
+            batch = batch.to(self.devices[0])
+            batch_input, batch_target = batch[:,:-1], batch[:,1:]
             batch_output = self.model(batch_input)
             batch_loss = self.loss_func(batch_output, batch_target).item()
             sum_loss += batch_loss
@@ -122,9 +113,9 @@ class BasicTrainer(BaseTrainer):
         # Return summary
         return dict(loss=valid_loss, **metrics_summary)
 
-def get_trainer(**kwargs):
-    return BasicTrainer(**kwargs)
+def get_trainer(devices, **kwargs):
+    return ModelParallelAutoRegressiveTrainer(devices, **kwargs)
 
 def _test():
-    t = BasicTrainer(output_dir='./')
+    t = AutoRegressiveTrainer(output_dir='./')
     t.build_model()
