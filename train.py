@@ -21,7 +21,7 @@ def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser()
     add_arg = parser.add_argument
-    add_arg('config', nargs='?', default='configs/hello.yaml',
+    add_arg('--config', nargs='?', default='configs/hello.yaml',
             help='YAML configuration file')
     add_arg('-d', '--distributed-backend', choices=['mpi', 'nccl', 'nccl-lsf', 'gloo'],
             help='Specify the distributed backend to use')
