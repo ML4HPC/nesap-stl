@@ -63,6 +63,8 @@ class FMRIDataset(torch.utils.data.Dataset):
 
 def preprocess_targets(targets_df):
     """ Preprocess target\s dataframe (binarize, etc), depending on the variable """
+    # Clean subjectkey such that there is no _ in between
+    targets_df['subjectkey'] = targets_df['subjectkey'].str.replace(r'_', '')
     # Set subjectkey as index of dataframe
     targets_df = targets_df.set_index('subjectkey')
     # Binarize sex
@@ -92,9 +94,9 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
         targets_df = targets_df[kwargs['target_label']]
 
         # Getting train, valid, test subjects
-        train_subjects = [s[-15:-11] + '_' + s[-11:] for s in train_files]
-        valid_subjects = [s[-15:-11] + '_' + s[-11:] for s in valid_files]
-        test_subjects = [s[-15:-11] + '_' + s[-11:] for s in test_files]
+        train_subjects = [s[-15:] for s in train_files]
+        valid_subjects = [s[-15:] for s in valid_files]
+        test_subjects = [s[-15:] for s in test_files]
 
         train_targets = targets_df.loc[targets_df.index.isin(train_subjects)]
         valid_targets = targets_df.loc[targets_df.index.isin(valid_subjects)]
