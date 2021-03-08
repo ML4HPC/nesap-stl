@@ -6,7 +6,7 @@
 #SBATCH -o logs/%x-%j.out
 
 # Setup software
-module load cgpu pytorch/v1.5.0-gpu
+module load cgpu pytorch/1.7.1-gpu
 export OMP_NUM_THREADS=32
 export KMP_AFFINITY="granularity=fine,compact ,1,0"
 export KMP_BLOCKTIME=1
