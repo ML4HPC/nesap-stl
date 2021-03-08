@@ -92,7 +92,7 @@ def main():
 
     # Load the trainer
     trainer = get_trainer(name=config['trainer'], distributed=distributed,
-                          gpus=gpus, rank=rank, output_dir=output_dir)
+                          gpus=gpus, devices=gpus, rank=rank, output_dir=output_dir)
 
     # Build the model and optimizer
     trainer.build(config)
