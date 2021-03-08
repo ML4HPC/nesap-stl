@@ -15,11 +15,12 @@ def get_datasets(name, **data_args):
 def get_data_loaders(name, batch_size, distributed=False,
                      use_dist_sampler_train=True,
                      use_dist_sampler_valid=False,
+                     use_dist_sampler_test=False,
                      **dataset_args):
     """Construct training and validation datasets and data loaders"""
 
     # Get the datasets
-    train_dataset, valid_dataset, loader_args = get_datasets(name=name, **dataset_args)
+    train_dataset, valid_dataset, test_dataset, loader_args = get_datasets(name=name, **dataset_args)
 
     # Distributed samplers
     train_sampler, valid_sampler = None, None
@@ -27,6 +28,8 @@ def get_data_loaders(name, batch_size, distributed=False,
         train_sampler = DistributedSampler(train_dataset)
     if distributed and use_dist_sampler_valid and valid_dataset is not None:
         valid_sampler = DistributedSampler(valid_dataset)
+    if distributed and use_dist_sampler_test and test_dataset is not None:
+        test_sampler = DistributedSampler(test_dataset)
 
     # Data loaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
@@ -37,4 +40,10 @@ def get_data_loaders(name, batch_size, distributed=False,
                                sampler=valid_sampler,
                                **loader_args)
                     if valid_dataset is not None else None)
-    return train_loader, valid_loader
+    test_loader = (DataLoader(test_dataset, batch_size=batch_size,
+                               sampler=test_sampler,
+                               **loader_args)
+                    if test_dataset is not None else None)
+
+
+    return train_loader, valid_loader, test_loader

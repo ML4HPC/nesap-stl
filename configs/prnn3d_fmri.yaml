@@ -6,11 +6,14 @@ trainer: auto_regressive
 
 data:
     name: fmri
-    data_dir: /global/cscratch1/sd/yanzhang/data_brain/fmri_numpy_380 #fmri_numpy_383
+    data_dir: /global/cscratch1/sd/sswwhan/abcd-fmriprep-rs-npz/
+    target_filepath: /global/homes/s/sswwhan/demo.total.csv
+    target_label: sex
     n_train: 8
     n_valid: 8
+    n_test: 8
     time_frames: 32
-    patch_size: 2
+    # patch_size: 2
     batch_size: 1
 
 model:

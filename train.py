@@ -21,7 +21,7 @@ def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser()
     add_arg = parser.add_argument
-    add_arg('config', nargs='?', default='configs/hello.yaml',
+    add_arg('--config', type=str, default='configs/hello.yaml',
             help='YAML configuration file')
     add_arg('-d', '--distributed-backend', choices=['mpi', 'nccl', 'nccl-lsf', 'gloo'],
             help='Specify the distributed backend to use')
@@ -69,7 +69,7 @@ def main():
 
     # Load the datasets
     distributed = args.distributed_backend is not None
-    train_data_loader, valid_data_loader = get_data_loaders(
+    train_data_loader, valid_data_loader, test_data_loader = get_data_loaders(
         distributed=distributed, **config['data'])
 
     # Load the trainer

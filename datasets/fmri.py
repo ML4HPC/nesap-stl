@@ -62,7 +62,7 @@ class FMRIDataset(torch.utils.data.Dataset):
         return img, target
 
 def preprocess_targets(targets_df):
-    """ Preprocess targets dataframe (binarize, etc), depending on the variable """
+    """ Preprocess target\s dataframe (binarize, etc), depending on the variable """
     # Set subjectkey as index of dataframe
     targets_df = targets_df.set_index('subjectkey')
     # Binarize sex
@@ -104,7 +104,8 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
     valid_data = FMRIDataset(data_dir, valid_files, target_df=valid_targets, **kwargs)
     test_data = FMRIDataset(data_dir, test_files, target_df=test_targets, **kwargs)
 
-    return train_data, valid_data, test_data
+    # Datasets and loader config
+    return train_data, valid_data, test_data, {}
 
 def _test():
     data_dir = '/global/cscratch1/sd/sswwhan/abcd-fmriprep-rs-npz/'
