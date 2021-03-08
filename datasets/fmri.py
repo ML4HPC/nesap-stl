@@ -108,10 +108,10 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
     return train_data, valid_data, test_data, {}
 
 def _test():
-    data_dir = '/global/cscratch1/sd/sswwhan/abcd-fmriprep-rs-npz/'
+    data_dir = '/global/cscratch1/sd/sswwhan/data/abcd-fmriprep-rs-npz/'
 
     dataset_optional = {
-        target_filepath: '/global/homes/s/sswwhan/demo.total.csv',
+        target_filepath: '/global/cscratch1/sd/sswwhan/data/demo.total.csv',
         target_label: 'sex'
     }
 
