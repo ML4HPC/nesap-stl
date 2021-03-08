@@ -8,8 +8,8 @@
 # Setup software
 module load pytorch/v1.5.0
 export OMP_NUM_THREADS=32
-export KMP_AFFINITY="granularity=fine,compact,1,0"
+export KMP_AFFINITY="granularity=fine,compact ,1,0"
 export KMP_BLOCKTIME=1
 
 # Run the training
-srun -l -u python train.py --config configs/prnn3d_fmri.yaml -d mpi $@
+srun -l -u python train.py --config configs/prnn3d_fmri.yaml -d mpi --gpus 0 1 2 3
