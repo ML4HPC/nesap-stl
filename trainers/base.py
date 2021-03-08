@@ -32,8 +32,8 @@ class BaseTrainer(object):
         self.output_dir = (os.path.expandvars(output_dir)
                            if output_dir is not None else None)
         self.gpus = devices
-        if len(gpus) > 0:
-            self.devices = [f'cuda:{gpu}' for gpu in gpus]
+        if len(self.gpus) > 0:
+            self.devices = [f'cuda:{gpu}' for gpu in self.gpus]
             # Use first gpu for compatibility with single-gpu setups
             self.gpu = self.gpus[0]
             self.device = self.devices[0]
