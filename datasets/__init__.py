@@ -23,7 +23,7 @@ def get_data_loaders(name, batch_size, distributed=False,
     train_dataset, valid_dataset, test_dataset, loader_args = get_datasets(name=name, **dataset_args)
 
     # Distributed samplers
-    train_sampler, valid_sampler = None, None
+    train_sampler, valid_sampler, test_sampler = None, None, None
     if distributed and use_dist_sampler_train:
         train_sampler = DistributedSampler(train_dataset)
     if distributed and use_dist_sampler_valid and valid_dataset is not None:
