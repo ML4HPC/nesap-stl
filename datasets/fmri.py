@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 
 # Locals
-from utils.preprocess import reshape_patch_3d
+# from utils.preprocess import reshape_patch_3d
 
 class FMRIDataset(torch.utils.data.Dataset):
     """PyTorch dataset for the resting-stage fMRI"""
@@ -92,13 +92,13 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
         targets_df = targets_df[kwargs['target_label']]
 
         # Getting train, valid, test subjects
-        train_subjects = [s[4:] for s in train_files]
-        valid_subjects = [s[4:] for s in valid_files]
-        test_subjects = [s[4:] for s in test_files]
+        train_subjects = [s[-15:-11] + '_' + s[-11:] for s in train_files]
+        valid_subjects = [s[-15:-11] + '_' + s[-11:] for s in valid_files]
+        test_subjects = [s[-15:-11] + '_' + s[-11:] for s in test_files]
 
-        train_targets = targets_df.loc[targets_df['subjectkey'].isin(train_subjects)]
-        valid_targets = targets_df.loc[targets_df['subjectkey'].isin(valid_subjects)]
-        test_targets = targets_df.loc[targets_df['subjectkey'].isin(test_subjects)]
+        train_targets = targets_df.loc[targets_df.index.isin(train_subjects)]
+        valid_targets = targets_df.loc[targets_df.index.isin(valid_subjects)]
+        test_targets = targets_df.loc[targets_df.index.isin(test_subjects)]
 
     train_data = FMRIDataset(data_dir, train_files, target_df=train_targets, **kwargs)
     valid_data = FMRIDataset(data_dir, valid_files, target_df=valid_targets, **kwargs)
@@ -115,7 +115,7 @@ def _test():
         target_label: 'sex'
     }
 
-    train_data, valid_data, test_data = get_datasets(data_dir, 128, 16, 16, dataset_optional)
+    train_data, valid_data, test_data = get_datasets(data_dir, 128, 16, 16, **dataset_optional)
 
 if __name__ == '__main__':
     _test()
