@@ -27,7 +27,7 @@ class BaseTrainer(object):
     """
 
     def __init__(self, output_dir=None, gpus=[],
-                 distributed=False, rank=0):
+                 distributed=False, rank=0, **kwargs):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.output_dir = (os.path.expandvars(output_dir)
                            if output_dir is not None else None)
