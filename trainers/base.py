@@ -26,12 +26,12 @@ class BaseTrainer(object):
     logging of summaries, and checkpoints.
     """
 
-    def __init__(self, output_dir=None, gpus=[],
+    def __init__(self, output_dir=None, devices=[],
                  distributed=False, rank=0, **kwargs):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.output_dir = (os.path.expandvars(output_dir)
                            if output_dir is not None else None)
-        self.gpus = gpus
+        self.gpus = devices
         if len(gpus) > 0:
             self.devices = [f'cuda:{gpu}' for gpu in gpus]
             # Use first gpu for compatibility with single-gpu setups
