@@ -37,7 +37,7 @@ class BaseTrainer(object):
             # Use first gpu for compatibility with single-gpu setups
             self.gpu = self.gpus[0]
             self.device = self.devices[0]
-            torch.cuda.set_device(self.gpu)
+            torch.cuda.set_device(self.gpu[0])
         else:
             self.devices = ['cpu']
             self.device = self.devices[0]
