@@ -115,7 +115,7 @@ def _test():
         'target_label': 'sex'
     }
 
-    train_data, valid_data, test_data = get_datasets(data_dir, 128, 16, 16, **dataset_optional)
+    train_data, valid_data, test_data, _ = get_datasets(data_dir, 128, 16, 16, **dataset_optional)
 
 if __name__ == '__main__':
     _test()
