@@ -111,7 +111,7 @@ def _test():
     data_dir = '/global/cscratch1/sd/sswwhan/abcd-fmriprep-rs-npz/'
 
     dataset_optional = {
-        target_filepath: '/global/homes/s/sswwhan/demo.total.csv'
+        target_filepath: '/global/homes/s/sswwhan/demo.total.csv',
         target_label: 'sex'
     }
 
