@@ -7,8 +7,8 @@ trainer: auto_regressive
 data:
     name: fmri
     data_dir: /global/cscratch1/sd/sswwhan/data/abcd-fmriprep-rs-npz/
-    target_filepath: /global/cscratch1/sd/sswwhan/data/demo.total.csv
-    target_label: sex
+    # target_filepath: /global/cscratch1/sd/sswwhan/data/demo.total.csv
+    # target_label: sex
     n_train: 8
     n_valid: 8
     n_test: 8
