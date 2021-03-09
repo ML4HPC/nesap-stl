@@ -24,10 +24,23 @@ The directory layout of this repo is designed to be flexible:
 
 All examples are run with the generic training script, `train.py`.
 
-## How to run
+## How to run on CPU
 
 To run the examples on the Cori supercomputer, you may use the provided
 example SLURM batch script. Here's how to run the Hello World example on 4
 Haswell nodes:
 
 `sbatch -N 4 scripts/train_cori.sh configs/hello.yaml`
+
+## How to run on GPU
+
+To run the examples on the Cori supercomputer, you may use the provided
+example SLURM batch script. Here's how to run the Hello World example on 4
+Haswell nodes:
+
+```{bash}
+module load cgpu
+sbatch -N 1 scripts/train_prnn3d_fmri.sh
+```
+
+
