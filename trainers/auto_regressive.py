@@ -27,7 +27,7 @@ class AutoRegressiveTrainer(BasicTrainer):
 
         # Loop over training batches
         for i, batch in enumerate(data_loader):
-            batch = batch.to(self.device)
+            batch = batch.to(self.device).float()
             self.model.zero_grad()
             batch_input, batch_target = batch[:,:-1], batch[:,1:]
             batch_output = self.model(batch_input)

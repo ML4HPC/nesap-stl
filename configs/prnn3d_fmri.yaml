@@ -14,11 +14,11 @@ data:
     n_test: 8
     time_frames: 32
     # patch_size: 2
-    batch_size: 1
+    batch_size: 2
 
 model:
     name: predrnn_pp
-    num_dims: 3
+    num_dims: 2
     num_hidden: [8, 8, 8, 8]
 
 loss:
