@@ -19,7 +19,7 @@ data:
 model:
     name: predrnn_pp
     num_dims: 2
-    num_hidden: [8, 8, 8, 8]
+    num_hidden: [8, 8, 8, 99]
 
 loss:
     name: MSELoss
