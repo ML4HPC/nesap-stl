@@ -109,7 +109,7 @@ def get_datasets(data_dir, n_train, n_valid, n_test, **kwargs):
     test_data = FMRIDataset(data_dir, test_files, target_df=test_targets)
 
     # Datasets and loader config
-    return train_data, valid_data, test_data, {}
+    return train_data, valid_data, {}
 
 def _test():
     data_dir = '/global/cscratch1/sd/sswwhan/data/abcd-fmriprep-rs-npz/'
