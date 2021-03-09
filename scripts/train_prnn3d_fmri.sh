@@ -5,7 +5,7 @@
 #SBATCH --gpus-per-task=1
 #SBATCH --exclusive
 #SBATCH --time 4:00:00
-#SBATCH -J train-cgpu
+#SBATCH -J prnn3d_fmri
 #SBATCH -o logs/%x-%j.out
 
 # Setup software
