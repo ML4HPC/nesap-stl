@@ -58,8 +58,10 @@ class FMRIDataset(torch.utils.data.Dataset):
         # x = reshape_patch_3d(x[None, :, None], self.patch_size).squeeze(0)
 
         # Returns img, target (None), if no targets specified
-
-        return img, target
+        if target:
+            return img, target
+        
+        return img
 
 def preprocess_targets(targets_df):
     """ Preprocess target\s dataframe (binarize, etc), depending on the variable """
