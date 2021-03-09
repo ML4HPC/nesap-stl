@@ -69,7 +69,7 @@ def main():
 
     # Load the datasets
     distributed = args.distributed_backend is not None
-    train_data_loader, valid_data_loader, test_data_loader = get_data_loaders(
+    train_data_loader, valid_data_loader = get_data_loaders(
         distributed=distributed, **config['data'])
 
     # Load the trainer
