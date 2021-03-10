@@ -43,4 +43,6 @@ module load cgpu
 sbatch -N 1 scripts/train_prnn3d_fmri.sh
 ```
 
+## How to get interactive GPU node on Cori
+`salloc -N 1 -C gpu -q interactive -t 02:00:00` 
 
